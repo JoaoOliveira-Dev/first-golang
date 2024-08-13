@@ -1,45 +1,33 @@
 package main
 
-import "fmt"
+import (
+	"crud/internal/config"
+	"encoding/json"
+	"fmt"
+	"os"
+)
 
-type Pessoa struct {
-	nome string
-	idade int
-	email string
-}
+// Função para fazer configuração com um arquivo
+func main(){
 
-// Desse jeito, todos que estiverem no pacote main poderá usar a variável
-// A variável pessoa2 está recebendo os tipos que a strutura Pessoa recebe
-var pessoa2 Pessoa = Pessoa{}
+	// Será alocado essa estrutura na memória e ele vai passar para mim o lugar que está alocado
+	default_config := &config.Config{}
 
-func Falar(p Pessoa){
-	fmt.Printf("A pessoa %v com o email %v está testandoa função falar!! \n", p.nome, p.email)
-}
+	// Esse if é diferente pois a variável "file_config" só consegue ser usada dentro do escopo do if
+	if file_config := os.Getenv("STOQ2_CONFIG"); file_config != ""{
+		file, err := os.ReadFile(file_config)
+		if err != nil {
+			fmt.Println(err.Error())
+			// log.Panicln(err.Error()) faz com que mate o sistema se cair nesse IF
+		}
 
-// Aqui você está atrelando a o comportamento dessa função na Pessoa
-func (p Pessoa) Ouvir(){
-	fmt.Printf("A pessoa %v com o email %v está testandoa função ouvir!! \n", p.nome, p.email)
-}
+		// Não terá tratamento de erro nesse caso pq o sistema não precisa necessariamente de um arquivo para fazer a configuração
+		json.Unmarshal(file, default_config)
 
-func (p Pessoa) Dormir(){
-	fmt.Printf("Função dormir!!")
-}
-
-func main() {
-
-	pessoa2.nome = "Bianca"
-	pessoa2.email = "bibi.yumi@gmail.com"
-	pessoa2.idade = 19
-
-	pessoa1 := Pessoa{
-		nome: "João",
-		idade: 21,
-		email: "joaooli17@hotmail.com",
 	}
 
-	fmt.Printf("Olá, eu sou %v, tenho %v, meu email é: %v \n", pessoa1.nome, pessoa1.idade, pessoa1.email)
-	Falar(pessoa2)
-	pessoa1.Ouvir()
-	pessoa2.Dormir()
+	conf := config.NewConfig(default_config)
+
+	fmt.Println(conf)
 
 }
