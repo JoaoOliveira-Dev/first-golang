@@ -14,7 +14,7 @@ func main(){
 	default_config := &config.Config{}
 
 	// Esse if é diferente pois a variável "file_config" só consegue ser usada dentro do escopo do if
-	if file_config := os.Getenv("STOQ2_CONFIG"); file_config != ""{
+	if file_config := os.Getenv("STOQ2_FILE_CONFIG"); file_config != ""{
 		file, err := os.ReadFile(file_config)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -28,6 +28,12 @@ func main(){
 
 	conf := config.NewConfig(default_config)
 
-	fmt.Println(conf)
+	// Aqui ele vai transformar a estrutura em um json
+	data, _ :=json.Marshal(conf)
+
+	fmt.Println("Configurações", conf)
+
+	// Aqui ele vai transformar a estrutura em um json de bytes para poder ser lido
+	fmt.Println("Configurações json", string(data))
 
 }
